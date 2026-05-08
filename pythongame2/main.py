@@ -1,17 +1,49 @@
 import pygame as pg
 import random
-from pygame.sprite import Sprite
-from typing import List,Tuple
-
-
+import os
 
 
 
 pg.init()
+pg.mixer.init()
+
 
 window=pg.display.set_mode((800,600))
+print("music 文件夹下真实内容：",os.listdir('music'))
 
 pg.display.set_caption("猜拳游戏！")
+
+MUSIC_END=pg.USEREVENT+1
+
+pg.mixer.music.set_endevent(MUSIC_END)
+
+mus_list=[
+    'music/古风轻快氛围 调皮可爱 by 蜡笔小嘉-完整版.mp3'
+]
+current_index=0
+
+
+def next_mus():
+    global current_index
+    current_index+=1
+    if current_index==len(mus_list):
+        current_index=0
+    pg.mixer.music.load(mus_list[current_index])
+    pg.mixer.music.play()
+
+def prev_mus():
+    global current_index
+    current_index-=1
+    if current_index<0:
+        current_index=len(mus_list)-1
+    pg.mixer.music.load(mus_list[current_index])
+    pg.mixer.music.play()
+
+
+pg.mixer.music.load('music/古风轻快氛围 调皮可爱 by 蜡笔小嘉-完整版.mp3')
+
+pg.mixer.music.play(0,125)
+
 
 clock=pg.time.Clock()
 
@@ -61,6 +93,15 @@ while isRunning:
         if ev.type==pg.QUIT:
             isRunning=False
             break
+        elif ev.type==MUSIC_END:
+            print('music end')
+            current_index+=1
+            if current_index==len(mus_list):
+                current_index=0
+            pg.mixer.music.load(mus_list[current_index])
+            pg.mixer.music.play()
+            next_mus()
+            pass
 
         elif ev.type==pg.MOUSEBUTTONDOWN:#打印鼠标点击区域
             x,y=ev.pos
